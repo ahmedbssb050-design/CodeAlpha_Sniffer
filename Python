@@ -1,0 +1,27 @@
+from scapy.all import sniff, IP, TCP, UDP, ICMP
+
+def process_packet(packet):
+    # Check if the packet has an IP layer (Source/Dest IP)
+    if packet.haslayer(IP):
+        ip_layer = packet.getlayer(IP)
+        protocol = "Other"
+        
+        # Identify the protocol
+        if packet.haslayer(TCP):
+            protocol = "TCP"
+        elif packet.haslayer(UDP):
+            protocol = "UDP"
+        elif packet.haslayer(ICMP):
+            protocol = "ICMP"
+
+        print(f"[{protocol}] {ip_layer.src} -> {ip_layer.dst}")
+
+def main():
+    print("--- Basic Network Sniffer Started ---")
+    print("Listening for packets... (Press Ctrl+C to stop)")
+    
+    # Start sniffing. 'store=0' prevents memory buildup.
+    sniff(prn=process_packet, store=0)
+
+if __name__ == "__main__":
+    main()
